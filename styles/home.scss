@@ -1,0 +1,93 @@
+body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    .main {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        background: rgb(2,0,36);
+        background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(121,9,120,1) 0%, rgba(184,0,255,1) 100%);
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+        .head {
+            display: flex;
+            height: auto;
+            width: 100%;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            .nameSurname {
+                font-size: 50px;
+                color:white;
+                direction: flex;
+                justify-content: flex-start;
+                align-items: flex-start; 
+                @media only screen and (max-width: 768px) {
+                    font-size: 30px;
+                }
+            } 
+            .buttons {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: flex-end;
+                justify-content: flex-end;
+                
+                .btn {
+                    margin: 10px;
+                }
+            }
+        }
+        .folderSection {
+            width:100%;
+            height: auto;
+            
+            .folderTitle {
+                color:white;    
+            }    
+            .folder {
+                width:100%;
+                height: auto;
+                display: flex;
+                flex-direction: row;
+                @media only screen and (max-width: 768px) {
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .card {
+                    padding: 10px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width:200px;
+                    height: 100px;
+                    margin: 10px;
+                    cursor: pointer;
+                    transition: 300ms ease;
+                }
+                .card:hover {
+                    background-color: rgb(179, 179, 179);
+                    transition: 300ms ease;
+                }
+
+                #addCard {
+                    font-size: 50px;
+                    transition: 300ms ease;
+                    cursor: pointer;
+                }
+                #addCard:hover {
+                    background-color: rgb(179, 179, 179);
+                    transition: 300ms ease;
+                }
+            }
+            
+        }
+        #newFolder {
+            margin-top: auto;
+        }
+    }
+}

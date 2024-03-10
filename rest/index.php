@@ -2,7 +2,7 @@
     require '../vendor/autoload.php';
 
     Flight::route("/home", function() {
-        require "../home.html";
+        require_once "../home.html";
     });
 
     Flight::start();
