@@ -1,0 +1,93 @@
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}
+body .main {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background: rgb(2, 0, 36);
+  background: linear-gradient(90deg, rgb(2, 0, 36) 0%, rgb(121, 9, 120) 0%, rgb(184, 0, 255) 100%);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+}
+body .main .head {
+  display: flex;
+  height: auto;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+body .main .head .nameSurname {
+  font-size: 50px;
+  color: white;
+  direction: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+@media only screen and (max-width: 768px) {
+  body .main .head .nameSurname {
+    font-size: 30px;
+  }
+}
+body .main .head .buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+body .main .head .buttons .btn {
+  margin: 10px;
+}
+body .main .folderSection {
+  width: 100%;
+  height: auto;
+}
+body .main .folderSection .folderTitle {
+  color: white;
+}
+body .main .folderSection .folder {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+}
+@media only screen and (max-width: 768px) {
+  body .main .folderSection .folder {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+body .main .folderSection .folder .card {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 100px;
+  margin: 10px;
+  cursor: pointer;
+  transition: 300ms ease;
+}
+body .main .folderSection .folder .card:hover {
+  background-color: rgb(179, 179, 179);
+  transition: 300ms ease;
+}
+body .main .folderSection .folder #addCard {
+  font-size: 50px;
+  transition: 300ms ease;
+  cursor: pointer;
+}
+body .main .folderSection .folder #addCard:hover {
+  background-color: rgb(179, 179, 179);
+  transition: 300ms ease;
+}
+body .main #newFolder {
+  margin-top: auto;
+}/*# sourceMappingURL=home.css.map */

@@ -1,12 +1,8 @@
 <?php
     require '../vendor/autoload.php';
 
-    Flight::route("GET /hello", function() {
-        echo "hello world";
-    });
-
-    Flight::route("/", function(){
-        echo "base page";
+    Flight::route("/home", function() {
+        require_once "../home.html";
     });
 
     Flight::start();
