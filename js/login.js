@@ -54,7 +54,8 @@ $(document).ready(function() {
                     dataType: "json",
 
                     success: function(data) {
-                        localStorage.setItem('user', JSON.stringify(data))
+                        localStorage.setItem('token', JSON.stringify(data))
+
                         window.location.replace('home')
                     },
 
