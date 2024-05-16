@@ -97,21 +97,25 @@
                       <h1 class="modal-title fs-5" id="exampleModalLabel">New Deck</h1>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div class="input-group mb-3">
+                      <span class="input-group-text" id="inputGroup-sizing-default">Deck Name</span>
+                      <input type="text" class="form-control deckNameInput" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    </div>
                     <div id="cards" class="modal-body">
                         <div class="input-group mb-3">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Question</span>
+                            <span class="input-group-text questionInput" id="inputGroup-sizing-default">Question</span>
                             <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                         </div>
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-default">Answer</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                            <input type="text answerInput" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                         </div>
                         
                         <button id="newCard" type="button" class="btn btn-primary">New Card</button>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Create</button>
+                      <button id="createDeckBttn" type="button" class="btn btn-primary">Create</button>
                     </div>
                   </div>
                 </div>
@@ -126,6 +130,7 @@
                         <span class="input-group-text" id="inputGroup-sizing-default">Deck Name</span>
                         <input id="newDeckNameInput" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                       </div>
+                      <button style="margin-left: 10px;" id="deleteDeckBttn" type="button" class="btn btn-danger">Delete</button>
                       <button style="margin-left: 10px;" id="renameDeck" type="button" class="btn btn-success">Rename</button>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>

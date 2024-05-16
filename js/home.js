@@ -1,13 +1,38 @@
 let cardsService = {
     currentDeck: null,
     currentDeckId: 0,
-    user: JSON.parse(localStorage.getItem('user')),
+    user: null,
     index: 0,
     selectedFolderId: 0,
     renaming: false,
+    userToken: null,
 
 
     serve: function() {
+        let token = localStorage.getItem('token');
+        cardsService.userToken = JSON.parse(token).token
+
+        if (token) {
+    
+          try {
+            let base64Url = token.split('.')[1];      //function for getting data from JWT key
+            let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            let jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            parsedUser = JSON.parse(jsonPayload);
+            cardsService.user = parsedUser
+          }
+    
+          catch(error){
+            console.error("Invalid Token");
+    
+            setTimeout(()=>{userService.logout();}, 3000)
+          }
+        } else {
+          console.log("Token Missing")
+        }
+    
         cardsService.getFolders()
         
         $("#newDeckName").hide()
@@ -27,6 +52,101 @@ let cardsService = {
                 `
     
             $("#cards").prepend(input)
+        })
+
+        $("#deleteDeckBttn").click(function() {
+            console.log(cardsService.currentDeckId)
+            $.ajax({
+                url: `deleteFolderDeckByDeck/${cardsService.currentDeckId}`,
+                type: "DELETE",
+                success: function(res) {
+                    $.ajax({
+                        url: `deleteDeck/${cardsService.currentDeckId}`,
+                        type: "DELETE",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', cardsService.userToken);
+                        },
+                        success: function(res) {
+                            window.location.reload()
+                        }
+                    })
+                }
+            })
+        })
+
+        $("#createDeckBttn").click(function() {
+            var values = []
+            var pair = {}
+            $('#cards .form-control').each(function(index) {
+                if(index % 2 == 0) {
+                    var id = 'question' // Get the label text
+                    var value = $(this).val(); // Get the input value
+
+                    pair[id] = value
+                } else {
+                    var id = 'answer' // Get the label text
+                    var value = $(this).val(); // Get the input value
+                    
+                    pair[id] = value
+                    values.push(pair)
+                    pair = {}
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "addDeck",
+                data: JSON.stringify({
+                    deck_name: $(".deckNameInput").val()
+                }),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', cardsService.userToken);
+                },
+                contentType: "application/json",
+                dataType: "json",
+
+                success: function(res) {
+                    $.ajax({
+                        type: "POST",
+                        url: "addFolderDeck",
+                        data: JSON.stringify({
+                            deck_id: res.id,
+                            folder_id: cardsService.selectedFolderId
+                        }),
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', cardsService.userToken);
+                        },
+                        contentType: "application/json",
+                        dataType: "json",
+
+                        success: function(res1) {
+                            console.log('done')
+                        }
+                    })
+
+                    for(let el of values) {
+                        $.ajax({
+                            type: "POST",
+                            url: "addCard",
+                            data: JSON.stringify({
+                                question: el.question,
+                                answer: el.answer,
+                                deck_id: res.id
+                            }),
+                            contentType: "application/json",
+                            dataType: "json",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader('Authorization', cardsService.userToken);
+                            },
+    
+                            success: function(res2) {
+                                console.log('done')
+                            }
+                        })
+                    }
+                }
+                
+            })
         })
     
         $("#logOut").click(function() {
@@ -76,7 +196,7 @@ let cardsService = {
 
                 const newName = $("#newDeckNameInput").val()
 
-                cardsService.renameDeck(cardsService.currentDeckId, newName)
+                cardsService.renameDeck(cardsService.currentDeck.idId, newName)
                 cardsService.renaming = false
             }
         })
@@ -93,6 +213,9 @@ let cardsService = {
                 }),
                 contentType: "application/json",
                 dataType: "json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', cardsService.userToken);
+                },
 
                 success: function(res) {
                     $(".folderSection").append(`
@@ -103,7 +226,7 @@ let cardsService = {
                         </div>
                         <div id="folder-${res.id}" class = "folder">
                             <div data-bs-toggle="modal" data-bs-target="#createDeck" id="addCard" class = "card">
-                                +
+                                <button style="border: none; width: 100%" onclick="cardsService.selectedFolderId = ${folder.id}">+</button>
                             </div>
                         </div>
                     `)
@@ -166,6 +289,9 @@ let cardsService = {
         $.ajax({
             type: "GET",
             url: `getFoldersByUser/${cardsService.user.id}`,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', cardsService.userToken);
+            },
             
     
             success: function(res) {
@@ -179,7 +305,7 @@ let cardsService = {
                         </div>
                         <div id="folder-${folder.id}" class = "folder">
                             <div data-bs-toggle="modal" data-bs-target="#createDeck" id="addCard" class = "card">
-                                +
+                                <button style="border: none; width: 100%" onclick="cardsService.selectedFolderId = ${folder.id}">+</button>
                             </div>
                         </div>
                     `)
@@ -187,6 +313,9 @@ let cardsService = {
                     $.ajax({
                         type: "GET",
                         url: `getDecksByFolder/${folder.id}`,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', cardsService.userToken);
+                        },
 
                         success: function(res) {
                             for(let deck of res) {
@@ -215,13 +344,18 @@ let cardsService = {
         $.ajax({
             type: "GET",
             url: `getCardsByDeck/${deckId}`,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', cardsService.userToken);
+            },
     
             success: async function(res) {
                 cardsService.currentDeck = res
                 cardsService.currentDeckId = deckId
                 cardsService.index = 0
   
-                cardsService.displayCard()
+                if(res?.length != 0) {
+                    cardsService.displayCard()
+                }
             }            
         })
     },
@@ -257,6 +391,7 @@ let cardsService = {
     logout: function() {
         window.location.replace('landing')
         localStorage.removeItem('user')
+        localStorage.removeItem('token')
     },
 
     updateProfile: function(data) {
@@ -266,6 +401,9 @@ let cardsService = {
             data: data,
             contentType: "application/json",
             dataType: "json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', cardsService.userToken);
+            },
 
             success: function(res) {
                 cardsService.logout()
@@ -282,6 +420,9 @@ let cardsService = {
         $.ajax({
             type: "DELETE",
             url: `deleteFolder/${id}`,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', cardsService.userToken);
+            },
 
             success: function(res) {
                 console.log("Deleted successfully")
@@ -295,6 +436,9 @@ let cardsService = {
         $.ajax({
             type: "DELETE",
             url: `deleteFolderDeckByFolder/${id}`,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', cardsService.userToken);
+            },
 
             success: function(res) {
                 console.log("Deleted successfully")
@@ -316,6 +460,9 @@ let cardsService = {
             }),
             contentType: "application/json",
             dataType: "json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', cardsService.userToken);
+            },
 
             success: function(res) {
                 console.log("Renamed successfully")
@@ -332,6 +479,9 @@ let cardsService = {
         $.ajax({
             type: "DELETE",
             url: `deleteCard/${id}`,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', cardsService.userToken);
+            },
             success: function(res) {
                 console.log("Deleted card")
                 window.location.reload()
@@ -353,6 +503,9 @@ let cardsService = {
             }),
             contentType: "application/json",
             dataType: "json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', cardsService.userToken);
+            },
 
             success: function(res) {
                 console.log("Successfully Renamed")

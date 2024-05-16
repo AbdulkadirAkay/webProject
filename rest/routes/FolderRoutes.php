@@ -1,4 +1,10 @@
 <?php
+    /**
+    * @OA\Get(path="/getFoldersByUser/{id}", tags={"Get Folders by Id"}, security={{"ApiKeyAuth": {}}},
+    *     @OA\Parameter(in="path", name="id", description="User ID"),
+    *     @OA\Response(response="200", description="Gets Folders for User Id")
+    * )
+    */
     Flight::route("GET /getFoldersByUser/@id", function($id) {
         Flight::json(Flight::folderService()->getFoldersByUser($id));
     });
